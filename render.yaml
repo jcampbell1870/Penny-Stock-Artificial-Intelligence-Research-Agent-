@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: penny-stock-ai-research-agent
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    # A single worker keeps exactly one in-process weekly scheduler running.
+    startCommand: gunicorn app:app --workers 1 --threads 4 --timeout 120 --bind 0.0.0.0:$PORT
+    healthCheckPath: /healthz
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.3
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: COINGECKO_API_KEY
+        sync: false
