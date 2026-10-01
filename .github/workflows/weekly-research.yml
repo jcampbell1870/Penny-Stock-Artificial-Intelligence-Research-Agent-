@@ -1,0 +1,77 @@
+name: Weekly research & GitHub Pages
+
+on:
+  schedule:
+    # GitHub cron is UTC-only. Both triggers are registered and the "gate" job keeps
+    # only the one that equals Monday 7:00 PM Eastern Time for the current DST offset.
+    - cron: "0 23 * * 1" # Monday 7:00 PM EDT (daylight saving time)
+    - cron: "0 0 * * 2"  # Monday 7:00 PM EST (standard time)
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "agent/**"
+      - "docs/**"
+      - "requirements.txt"
+      - ".github/workflows/weekly-research.yml"
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    outputs:
+      run: ${{ steps.check.outputs.run }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Check Monday 7 PM Eastern schedule
+        id: check
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          CRON: ${{ github.event.schedule }}
+        run: |
+          if [ "$EVENT_NAME" != "schedule" ] || python -m agent.schedule --check-cron "$CRON"; then
+            echo "run=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "Skipping: this UTC trigger is not 7 PM Eastern for the current DST offset."
+            echo "run=false" >> "$GITHUB_OUTPUT"
+          fi
+
+  research:
+    needs: gate
+    if: needs.gate.outputs.run == 'true'
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Run research agent
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          OPENAI_MODEL: ${{ vars.OPENAI_MODEL }}
+          COINGECKO_API_KEY: ${{ secrets.COINGECKO_API_KEY }}
+        run: python -m agent.research --output docs/data/recommendations.json
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

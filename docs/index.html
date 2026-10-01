@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AI Research Agent – Top 10 Penny Stocks &amp; Crypto Buy Recommendations</title>
+  <meta name="description" content="Weekly AI research agent picks: top ten penny stock and cryptocurrency buy recommendations, refreshed every Monday at 7 PM Eastern.">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>AI Research Agent</h1>
+    <p class="subtitle">Top 10 weekly buy recommendations for penny stocks &amp; cryptocurrencies</p>
+    <p class="meta">
+      <span id="schedule">Refreshed every Monday at 7:00 PM Eastern Time</span>
+      · Last updated: <span id="generated-at">—</span>
+      · Next refresh: <span id="next-refresh">—</span>
+    </p>
+  </header>
+
+  <main>
+    <div id="status" class="status" role="status">Loading recommendations…</div>
+
+    <section aria-labelledby="stocks-title">
+      <h2 id="stocks-title">📈 Top 10 Penny Stock Buy Recommendations</h2>
+      <div class="table-wrap">
+        <table id="stocks-table">
+          <thead>
+            <tr>
+              <th>#</th><th>Symbol</th><th>Name</th><th>Price</th><th>1W</th><th>1M</th>
+              <th>RSI</th><th>Vol. surge</th><th>Risk</th><th>Score</th><th class="wide">Research notes</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section aria-labelledby="crypto-title">
+      <h2 id="crypto-title">🪙 Top 10 Cryptocurrency Buy Recommendations</h2>
+      <div class="table-wrap">
+        <table id="crypto-table">
+          <thead>
+            <tr>
+              <th>#</th><th>Symbol</th><th>Name</th><th>Price</th><th>24H</th><th>7D</th>
+              <th>30D</th><th>Mkt cap rank</th><th>Risk</th><th>Score</th><th class="wide">Research notes</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="methodology">
+      <h2>Methodology</h2>
+      <p id="methodology-stocks"></p>
+      <p id="methodology-crypto"></p>
+    </section>
+  </main>
+
+  <footer>
+    <p id="disclaimer" class="disclaimer">
+      For informational and educational purposes only. This is not financial advice.
+    </p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
